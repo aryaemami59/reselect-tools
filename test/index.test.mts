@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect'
+import { createSelector } from 'reselect';
 import {
   checkSelector,
   createSelectorWithDependencies,
@@ -6,14 +6,13 @@ import {
   registerSelectors,
   reset,
   selectorGraph
-} from '../src/index'
+} from '../src/index.js';
 
+import type { Selector, SelectorsObject } from "reselect";
+import { assert, beforeEach, suite, test } from 'vitest';
 import type {
   RegisteredSelector,
-  ResultSelector,
-  SelectorsObject
-} from 'src/types'
-import { assert, beforeEach, suite, test } from 'vitest'
+} from '../src/types.js';
 
 beforeEach(reset)
 
@@ -336,7 +335,7 @@ suite('selectorGraph', () => {
   })
 
   test('allows you to pass in a different selector key function', () => {
-    type DummySelector = ResultSelector & { idx: number }
+    type DummySelector = Selector & { idx: number }
     function idxSelectorKey(selector: DummySelector) {
       return selector.idx
     }

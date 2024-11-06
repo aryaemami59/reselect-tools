@@ -2,74 +2,49 @@
   "name": "reselect-tools",
   "version": "0.0.7",
   "description": "Selector Debugging Tools for Reselect.",
-  "main": "./dist/cjs/index.cjs",
-  "jsnext:main": "es/index.js",
-  "module": "./dist/reselect-tools.legacy-esm.js",
+  "jsnext:main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "import": {
-        "default": "./dist/reselect-tools.mjs",
-        "types": "./dist/reselect-tools.d.mts"
+      "module-sync": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
       },
-      "require": {
+      "module": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "default": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/cjs/index.cjs"
+        "default": "./dist/index.js"
       }
     }
   },
   "files": [
-    "lib",
     "src",
-    "dist",
-    "es"
+    "dist"
   ],
   "bugs": {
     "url": "https://github.com/skortchmark9/reselect-tools"
   },
   "scripts": {
-    "compile:commonjs": "better-npm-run compile:commonjs",
-    "compile:umdmin": "uglifyjs dist/reselect-tools.js -m -o dist/reselect-tools.min.js",
-    "compile:umd": "better-npm-run compile:umd",
-    "compile:es": "babel -d es/ src/",
-    "compile": "npm run compile:commonjs && npm run compile:umd && npm run compile:umdmin && npm run compile:es",
     "lint": "eslint src test",
     "clean": "rimraf dist",
     "lint-fix": "eslint --fix src test",
-    "prepublish": "npm run build",
+    "prepack": "npm run build",
     "test": "vitest",
-    "test:cov": "better-npm-run test:cov",
     "example": "opn http://localhost:9080/examples/demo.html && static-server",
-    "type-check": "tsc -b tsconfig.json",
-    "build": "tsup"
-  },
-  "betterScripts": {
-    "test": {
-      "command": "mocha --compilers js:babel-register --ui tdd --recursive",
-      "env": {
-        "NODE_ENV": "test"
-      }
-    },
-    "test:cov": {
-      "command": "nyc --reporter=lcov --reporter=text mocha --compilers js:babel-register --ui tdd",
-      "env": {
-        "NODE_ENV": "test",
-        "COVERAGE": "true"
-      }
-    },
-    "compile:commonjs": {
-      "command": "babel -d lib/ src/",
-      "env": {
-        "NODE_ENV": "commonjs"
-      }
-    },
-    "compile:umd": {
-      "command": "mkdirp dist/ && babel -o dist/reselect-tools.js src/",
-      "env": {
-        "NODE_ENV": "umd"
-      }
-    }
+    "type-check": "tsc -p tsconfig.json",
+    "build": "rimraf dist && tsup --config tsup.config.mts",
+    "format": "prettier -w .",
+    "format-check": "prettier -c ."
   },
   "keywords": [
     "redux",
@@ -84,33 +59,25 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
-    "better-npm-run": "0.1.1",
-    "chai": "^5.0.3",
-    "codecov.io": "^0.1.6",
-    "coveralls": "^3.1.1",
-    "eslint": "^8.56.0",
+    "@types/node": "^22.9.0",
+    "eslint": "^9.14.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-prettier": "^5.1.3",
-    "mkdirp": "^3.0.1",
-    "mocha": "^10.3.0",
-    "ncp": "^2.0.0",
-    "nyc": "^15.1.0",
-    "opn-cli": "^4.1.0",
-    "prettier": "^3.2.5",
-    "tsup": "^8.0.1",
-    "typescript": "^5.3.3",
-    "uglify-js": "^3.17.4",
-    "vitest": "^1.2.2"
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
+    "reselect": "^5.1.1",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.13.0",
+    "vitest": "^2.1.4"
   },
-  "dependencies": {
-    "reselect": "5.1.0"
+  "peerDependencies": {
+    "reselect": "^5.1.0"
+  },
+  "peerDependenciesMeta": {
+    "reselect": {
+      "optional": true
+    }
   }
 }

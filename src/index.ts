@@ -6,7 +6,7 @@ import type {
   Extra,
   Graph,
   RegisteredSelector
-} from './types'
+} from './types.js'
 export type {
   AnyFunction,
   CheckSelectorResults,
@@ -15,7 +15,7 @@ export type {
   Graph,
   Node,
   RegisteredSelector
-} from './types'
+} from './types.js'
 
 let _getState: (() => unknown) | null = null
 let _allSelectors = new Set<RegisteredSelector>()
