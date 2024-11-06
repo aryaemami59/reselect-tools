@@ -110,12 +110,12 @@ export function checkSelector(selector: RegisteredSelector | string) {
       try {
         extra.output = selector(state)
       } catch (e) {
-        extra.error = `checkSelector: error getting output of selector ${selectorName}. The error was:\n${
+        extra.error = `checkSelector: error getting output of selector ${selectorName ?? 'unknown'}. The error was:\n${
           e instanceof TypeError ? e.message : JSON.stringify(e)
         }`
       }
     } catch (e) {
-      extra.error = `checkSelector: error getting inputs of selector ${selectorName}. The error was:\n${
+      extra.error = `checkSelector: error getting inputs of selector ${selectorName ?? 'unknown'}. The error was:\n${
         e instanceof TypeError ? e.message : JSON.stringify(e)
       }`
     }
@@ -156,7 +156,7 @@ const defaultSelectorKey = (selector: RegisteredSelector) => {
 
   return (selector.dependencies ?? []).reduce(
     (base, dep) => {
-      return base + _sumString(dep)
+      return base + _sumString(dep).toString()
     },
     (selector.resultFunc ? selector.resultFunc : selector).toString(),
   )
@@ -168,8 +168,9 @@ const defaultSelectorKey = (selector: RegisteredSelector) => {
  */
 export function selectorGraph(selectorKey = defaultSelectorKey) {
   const graph: Graph = { nodes: {}, edges: [] }
-  const addToGraph = <S extends RegisteredSelector>(selector: S) => {
+  const addToGraph = (selector: RegisteredSelector) => {
     const name = selectorKey(selector)
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (graph.nodes[name]) return
     const { recomputations, isNamed } = checkSelector(selector)
     graph.nodes[name] = {

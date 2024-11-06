@@ -1,6 +1,6 @@
 import type { Selector, SelectorsObject } from 'reselect'
 import { createSelector } from 'reselect'
-import { assert, beforeEach, suite, test } from 'vitest'
+import { assert, beforeEach, expect, suite, test } from 'vitest'
 import {
   checkSelector,
   createSelectorWithDependencies,
@@ -47,6 +47,7 @@ suite('registerSelectors', () => {
   test('ignores inputs which are null', () => {
     const foo = () => 'foo'
     const bar = createSelector(foo, () => 'bar')
+    expect(bar).toBeTypeOf('function')
     const selectors = { foo, bar, property: null } as unknown as SelectorsObject
     registerSelectors(selectors)
   })
@@ -99,7 +100,7 @@ suite('checkSelector', () => {
   })
 
   test('if you give it a way of getting state, it also gets inputs and outputs', () => {
-    interface State {
+    type State = {
       foo: {
         baz: number
       }
@@ -129,7 +130,7 @@ suite('checkSelector', () => {
   })
 
   test('it returns the number of recomputations for a given selector', () => {
-    interface State {
+    type State = {
       foo: {
         baz: number
       }
@@ -180,7 +181,7 @@ suite('checkSelector', () => {
   })
 
   test("it allows you to pass in a string name of a selector if you've registered", () => {
-    interface State {
+    type State = {
       foo: number
     }
     const foo = (state: State) => state.foo
@@ -199,7 +200,7 @@ suite('checkSelector', () => {
   })
 
   test('it throws if you try to check a non-existent selector', () => {
-    interface State {
+    type State = {
       foo: number
     }
     const foo = (state: State) => state.foo
@@ -226,7 +227,7 @@ suite('checkSelector', () => {
   })
 
   test('it catches errors inside parent selector functions and exposes them', () => {
-    interface State {
+    type State = {
       foo: {
         bar: number
       }
@@ -244,7 +245,7 @@ suite('checkSelector', () => {
   })
 
   test('it catches errors inside selector functions and exposes them', () => {
-    interface State {
+    type State = {
       foo: {
         bar: number
       }
@@ -263,7 +264,7 @@ suite('checkSelector', () => {
 })
 
 suite('selectorGraph', () => {
-  interface State {
+  type State = {
     data: {
       users: [{ pets: number[] }]
       pets: number[]
@@ -285,7 +286,7 @@ suite('selectorGraph', () => {
     const currentUserPets$ = createSelector(
       currentUser$,
       pets$,
-      (currentUser, pets) => currentUser!.pets.map((petId) => pets[petId]!),
+      (currentUser, pets) => currentUser.pets.map((petId) => pets[petId]),
     )
     const random$ = () => 1
     const thingy$ = createSelector(random$, (number) => number + 1)
@@ -356,7 +357,7 @@ suite('selectorGraph', () => {
       const { nodes } = selectorGraph()
 
       // comes from func.name for top-level vanilla selector functions.
-      assert.equal(nodes['data$']?.recomputations, null)
+      assert.equal(nodes.data$.recomputations, null)
     })
 
     test('it falls back to toString on anonymous functions', () => {
@@ -390,11 +391,11 @@ suite('selectorGraph', () => {
       // please let's do better!
       // assert.isDefined(nodes['function () {\n        return 1;\n      }22074'])
       // Replace with:
-      assert.isDefined(nodes['memoized']) // In reselect v5.0.0-alpha.2 the anonymous function has been given the name `memoized`.
+      assert.isDefined(nodes.memoized) // In reselect v5.0.0-alpha.2 the anonymous function has been given the name `memoized`.
     })
 
     test("doesn't duplicate nodes if they are different", () => {
-      interface State {
+      type State = {
         foo: number
       }
       const foo$ = (state: State) => state.foo // node1
