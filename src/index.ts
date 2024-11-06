@@ -5,7 +5,7 @@ import type {
   CheckSelectorResults,
   Extra,
   Graph,
-  RegisteredSelector
+  RegisteredSelector,
 } from './types.js'
 export type {
   AnyFunction,
@@ -14,7 +14,7 @@ export type {
   Extra,
   Graph,
   Node,
-  RegisteredSelector
+  RegisteredSelector,
 } from './types.js'
 
 let _getState: (() => unknown) | null = null
@@ -38,7 +38,7 @@ const _isSelector = (selector: unknown): selector is Selector =>
   _isFunction(selector)
 
 const _addSelector = (
-  selector: Selector & { dependencies?: SelectorArray }
+  selector: Selector & { dependencies?: SelectorArray },
 ) => {
   _allSelectors.add(selector)
 
@@ -50,7 +50,7 @@ const _addSelector = (
  * @param selectors A key value pair object where the keys are selector names and the values are the selectors themselves.
  */
 export function registerSelectors(selectors: SelectorsObject) {
-  Object.keys(selectors).forEach(name => {
+  Object.keys(selectors).forEach((name) => {
     const selector = selectors[name]
     if (_isSelector(selector)) {
       Object.assign(selector, { selectorName: name })
@@ -82,8 +82,8 @@ export function checkSelector(selector: RegisteredSelector | string) {
   if (!_isFunction(selector)) {
     throw new Error(
       `Selector ${JSON.stringify(
-        selector
-      )} is not a function...has it been registered?`
+        selector,
+      )} is not a function...has it been registered?`,
     )
   }
 
@@ -98,14 +98,14 @@ export function checkSelector(selector: RegisteredSelector | string) {
     dependencies,
     recomputations,
     isNamed,
-    selectorName
+    selectorName,
   }
   if (_getState) {
     const extra: Extra = {}
     const state = _getState()
 
     try {
-      extra.inputs = dependencies.map(parentSelector => parentSelector(state))
+      extra.inputs = dependencies.map((parentSelector) => parentSelector(state))
 
       try {
         extra.output = selector(state)
@@ -136,7 +136,7 @@ export function getStateWith(stateGetter: AnyFunction | null) {
 function _sumString(str: AnyFunction) {
   return Array.from(str.toString()).reduce(
     (sum, char) => char.charCodeAt(0) + sum,
-    0
+    0,
   )
 }
 /**
@@ -158,7 +158,7 @@ const defaultSelectorKey = (selector: RegisteredSelector) => {
     (base, dep) => {
       return base + _sumString(dep)
     },
-    (selector.resultFunc ? selector.resultFunc : selector).toString()
+    (selector.resultFunc ? selector.resultFunc : selector).toString(),
   )
 }
 /**
@@ -175,15 +175,15 @@ export function selectorGraph(selectorKey = defaultSelectorKey) {
     graph.nodes[name] = {
       recomputations,
       isNamed,
-      name
+      name,
     }
 
     const dependencies = selector.dependencies ?? []
-    dependencies.forEach(dependency => {
+    dependencies.forEach((dependency) => {
       addToGraph(dependency)
       graph.edges.push({
         from: name,
-        to: selectorKey(dependency)
+        to: selectorKey(dependency),
       })
     })
   }
@@ -199,6 +199,6 @@ export function selectorGraph(selectorKey = defaultSelectorKey) {
 if (typeof window !== 'undefined') {
   window.__RESELECT_TOOLS__ = {
     selectorGraph,
-    checkSelector
+    checkSelector,
   }
 }

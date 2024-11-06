@@ -1,29 +1,26 @@
 {
   "presets": ["env"],
-  "plugins": [
-  ],
+  "plugins": [],
   "env": {
     "commonjs": {
-      "plugins": [
-        ["transform-es2015-modules-commonjs", { "loose": true }]
-      ]
+      "plugins": [["transform-es2015-modules-commonjs", { "loose": true }]]
     },
     "umd": {
       "plugins": [
-        ["transform-es2015-modules-umd",
-        {
-          "loose": true,
-          "globals": {
-            'reselect': 'Reselect'
+        [
+          "transform-es2015-modules-umd",
+          {
+            "loose": true,
+            "globals": {
+              "reselect": "Reselect"
+            }
           }
-        }]
+        ]
       ],
       "moduleId": "ReselectTools"
     },
     "test": {
-      "plugins": [
-        ["transform-es2015-modules-commonjs", { "loose": true }],
-      ]
+      "plugins": [["transform-es2015-modules-commonjs", { "loose": true }]]
     }
   }
 }

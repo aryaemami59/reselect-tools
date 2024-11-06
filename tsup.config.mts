@@ -1,11 +1,11 @@
 import type { Options } from 'tsup'
 import { defineConfig } from 'tsup'
 
-export default defineConfig(overrideOptions => {
+export default defineConfig((overrideOptions) => {
   const commonOptions = {
     clean: true,
     entry: {
-      index: 'src/index.ts'
+      index: 'src/index.ts',
     },
     removeNodeProtocol: false,
     shims: true,
@@ -13,7 +13,7 @@ export default defineConfig(overrideOptions => {
     splitting: false,
     target: ['esnext'],
     tsconfig: './tsconfig.build.json',
-    ...overrideOptions
+    ...overrideOptions,
   } satisfies Options
 
   return [

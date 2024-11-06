@@ -7,5 +7,5 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### New Features
 
-Removed need for createSelectorWithDependencies! (#6) 
+Removed need for createSelectorWithDependencies! (#6)
 Exception handling in the selectorGraph() (#10)

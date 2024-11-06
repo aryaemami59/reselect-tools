@@ -1,18 +1,15 @@
-import { createSelector } from 'reselect';
+import type { Selector, SelectorsObject } from 'reselect'
+import { createSelector } from 'reselect'
+import { assert, beforeEach, suite, test } from 'vitest'
 import {
   checkSelector,
   createSelectorWithDependencies,
   getStateWith,
   registerSelectors,
   reset,
-  selectorGraph
-} from '../src/index.js';
-
-import type { Selector, SelectorsObject } from "reselect";
-import { assert, beforeEach, suite, test } from 'vitest';
-import type {
-  RegisteredSelector,
-} from '../src/types.js';
+  selectorGraph,
+} from '../src/index.js'
+import type { RegisteredSelector } from '../src/types.js'
 
 beforeEach(reset)
 
@@ -21,12 +18,12 @@ suite('registerSelectors', () => {
     const foo = (() => 'foo') as unknown as RegisteredSelector
     const bar = createSelector(
       foo,
-      () => 'bar'
+      () => 'bar',
     ) as unknown as RegisteredSelector
     const baz = createSelector(
       bar,
       foo,
-      () => 'baz'
+      () => 'baz',
     ) as unknown as RegisteredSelector
     registerSelectors({ foo, bar, bazinga: baz })
 
@@ -39,7 +36,7 @@ suite('registerSelectors', () => {
     const foo = () => 'foo'
     const bar = createSelector(foo, () => 'bar')
     const utilities = {
-      identity: (x: unknown) => x
+      identity: (x: unknown) => x,
     } as unknown as RegisteredSelector
     const selectors = { foo, bar, utilities }
     registerSelectors(selectors)
@@ -109,14 +106,14 @@ suite('checkSelector', () => {
     }
     const state: State = {
       foo: {
-        baz: 1
-      }
+        baz: 1,
+      },
     }
 
     getStateWith(() => state)
 
     const foo = (state: State) => state.foo
-    const bar = createSelector(foo, foo => foo.baz)
+    const bar = createSelector(foo, (foo) => foo.baz)
 
     const checkedFoo = checkSelector(foo)
     assert.equal(checkedFoo.inputs?.length, 0)
@@ -138,13 +135,13 @@ suite('checkSelector', () => {
       }
     }
     const foo = (state: State) => state.foo
-    const bar = createSelector(foo, foo => foo.baz)
+    const bar = createSelector(foo, (foo) => foo.baz)
     assert.equal(bar.recomputations(), 0)
 
     const state: State = {
       foo: {
-        baz: 1
-      }
+        baz: 1,
+      },
     }
     getStateWith(() => state)
 
@@ -158,13 +155,13 @@ suite('checkSelector', () => {
       output: 1,
       recomputations: 1,
       isNamed: false,
-      selectorName: null
+      selectorName: null,
     })
 
     const newState: State = {
       foo: {
-        baz: 2
-      }
+        baz: 2,
+      },
     }
     getStateWith(() => newState)
 
@@ -178,7 +175,7 @@ suite('checkSelector', () => {
       output: 2,
       recomputations: 2,
       isNamed: false,
-      selectorName: null
+      selectorName: null,
     })
   })
 
@@ -187,7 +184,7 @@ suite('checkSelector', () => {
       foo: number
     }
     const foo = (state: State) => state.foo
-    const bar = createSelector(foo, foo => foo + 1)
+    const bar = createSelector(foo, (foo) => foo + 1)
     registerSelectors({ bar })
     getStateWith(() => ({ foo: 1 }))
     const checked = checkSelector('bar')
@@ -197,7 +194,7 @@ suite('checkSelector', () => {
       output: 2,
       recomputations: 0,
       isNamed: true,
-      selectorName: 'bar'
+      selectorName: 'bar',
     })
   })
 
@@ -206,7 +203,7 @@ suite('checkSelector', () => {
       foo: number
     }
     const foo = (state: State) => state.foo
-    const bar = createSelector(foo, foo => foo + 1)
+    const bar = createSelector(foo, (foo) => foo + 1)
     registerSelectors({ bar })
     assert.throws(() => checkSelector('baz'))
   })
@@ -218,7 +215,7 @@ suite('checkSelector', () => {
 
   test('it tells you whether or not a selector has been registered', () => {
     const one$ = () => 1
-    const two$ = createSelector(one$, one => one + 1)
+    const two$ = createSelector(one$, (one) => one + 1)
     registerSelectors({ one$ })
 
     assert.equal(checkSelector(() => 1).isNamed, false)
@@ -235,14 +232,14 @@ suite('checkSelector', () => {
       }
     }
     const badParentSelector$ = (state: State) => state.foo.bar
-    const badSelector$ = createSelector(badParentSelector$, foo => foo)
+    const badSelector$ = createSelector(badParentSelector$, (foo) => foo)
     getStateWith(() => [])
     registerSelectors({ badSelector$ })
 
     const checked = checkSelector('badSelector$')
     assert.equal(
       checked.error,
-      "checkSelector: error getting inputs of selector badSelector$. The error was:\nCannot read properties of undefined (reading 'bar')"
+      "checkSelector: error getting inputs of selector badSelector$. The error was:\nCannot read properties of undefined (reading 'bar')",
     )
   })
 
@@ -260,7 +257,7 @@ suite('checkSelector', () => {
     assert.equal(
       checked.error,
       'checkSelector: error getting output of selector badSelector$. The error was:\n' +
-        "Cannot read properties of undefined (reading 'bar')"
+        "Cannot read properties of undefined (reading 'bar')",
     )
   })
 })
@@ -278,20 +275,20 @@ suite('selectorGraph', () => {
   function createMockSelectors() {
     const data$ = (state: State) => state.data
     const ui$ = (state: State) => state.ui
-    const users$ = createSelector(data$, data => data.users)
+    const users$ = createSelector(data$, (data) => data.users)
     const pets$ = createSelector(data$, ({ pets }) => pets)
     const currentUser$ = createSelector(
       ui$,
       users$,
-      (ui, users) => users[ui.currentUser]
+      (ui, users) => users[ui.currentUser],
     )
     const currentUserPets$ = createSelector(
       currentUser$,
       pets$,
-      (currentUser, pets) => currentUser!.pets.map(petId => pets[petId]!)
+      (currentUser, pets) => currentUser!.pets.map((petId) => pets[petId]!),
     )
     const random$ = () => 1
-    const thingy$ = createSelector(random$, number => number + 1)
+    const thingy$ = createSelector(random$, (number) => number + 1)
     const booya$ = createSelector(thingy$, currentUser$, () => 'booya!')
     const selectors = {
       data$,
@@ -302,7 +299,7 @@ suite('selectorGraph', () => {
       currentUserPets$,
       random$,
       thingy$,
-      booya$
+      booya$,
     }
     // @ts-expect-error
     registerSelectors(selectors)
@@ -319,7 +316,7 @@ suite('selectorGraph', () => {
     function parent() {
       return 'parent'
     }
-    const child$ = createSelector(parent, string => string)
+    const child$ = createSelector(parent, (string) => string)
     registerSelectors({ child$ })
     const { edges, nodes } = selectorGraph()
     assert.equal(Object.keys(nodes).length, 2)
@@ -365,7 +362,7 @@ suite('selectorGraph', () => {
     test('it falls back to toString on anonymous functions', () => {
       const selector1 = createSelector(
         () => 1,
-        one => one + 1
+        (one) => one + 1,
       )
       registerSelectors({ selector1 })
       const { nodes } = selectorGraph()
@@ -422,7 +419,7 @@ suite('selectorGraph', () => {
         { from: 'currentUserPets$', to: 'pets$' },
         { from: 'thingy$', to: 'random$' },
         { from: 'booya$', to: 'thingy$' },
-        { from: 'booya$', to: 'currentUser$' }
+        { from: 'booya$', to: 'currentUser$' },
       ]
       assert.sameDeepMembers(edges, expectedEdges)
     })

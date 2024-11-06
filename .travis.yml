@@ -1,14 +1,14 @@
 language: node_js
 node_js:
-      - "4"
-      - "5"
-      - "6"
-      - "7"
+  - '4'
+  - '5'
+  - '6'
+  - '7'
 script:
-      - npm run lint
-      - npm test
-      - npm run test:cov
-      - npm run compile
+  - npm run lint
+  - npm test
+  - npm run test:cov
+  - npm run compile
 
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/codecov.io/bin/codecov.io.js
